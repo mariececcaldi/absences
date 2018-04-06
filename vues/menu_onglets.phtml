@@ -1,0 +1,12 @@
+<?php 
+if($droits_gestion_absence || $droits_conges)
+{
+    ?>
+      <ul class="nav nav-tabs">
+        <li class="<?php echo ($_GET['page'] == 'perso') || !$_GET['page']       ? 'active' : '' ; ?>"><a href="index.php?page=perso">Espace personnel</a></li>
+        <?php if($droits_gestion_absence)   { ?><li class="<?php echo ($_GET['page'] == 'responsable_equipe')    ? 'active' : '' ; ?>"><a href="index.php?page=responsable_equipe">Gestion des absences de son équipe</a></li><?php } ?>
+        <?php if($droits_conges)            { ?><li class="<?php echo ($_GET['page'] == 'gestion_rh')            ? 'active' : '' ; ?>"><a href="index.php?page=gestion_rh">Gestion des congés</a></li><?php } ?>
+      </ul>
+    <?php
+}
+?>

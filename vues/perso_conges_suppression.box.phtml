@@ -1,0 +1,23 @@
+<div id="suppr_conges<?php echo $mon_absence['id']; ?>" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title"><b>SUPPRIMER MA DEMANDE D'ABSENCEsssss</b></h4>
+      </div>
+      <form method="get">
+        <div class="modal-body">
+          Confirmez vous la suppression de la demande de <?php echo $_absences[$mon_absence['type']] ?> du <?php echo date("d-m-Y \(G\h\)", strtotime($mon_absence['date_debut'])) ; ?> au <?php echo date("d-m-Y \(G\h\)", strtotime($mon_absence['date_fin'])) ; ?>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+          <input type="hidden" name="employes_id" value="<?php echo $mon_absence['employes_id'] ; ?>">
+          <input type="hidden" name="id" value="<?php echo $mon_absence['id'] ; ?>">
+          <input type="hidden" name="objet"      value="absences_perso">
+          <input type="hidden" name="action"     value="suppression">
+          <input type="submit" name="suppr_conges" class="btn btn-primary" value="Valider">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

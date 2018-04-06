@@ -1,0 +1,75 @@
+.box .box-header h2 i {
+    color: #34383C;
+}
+.box .box-header h2 {
+    font-weight: 600;
+}
+
+.info-box .quarters .q2, .info-box .quarters .q4 {
+    text-align: left !important;
+}
+.info-box .quarters .q2 {
+    padding: 10 !important;
+}
+
+/* calendar */
+td.survol {
+     border-bottom-color: black !important;
+     border-bottom-width: 4px !important;
+}
+table.calendrier		{ width:100% ; border: none; }
+.calendrier tbody > tr > td, .calendrier tfoot > tr > td {
+    padding: 8px;
+    line-height: 1.428571429;
+    vertical-align: top;
+    border-top: none;
+}
+.calendrier td {
+    border: none;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+td.D, td.S {
+     background-color: #cecdcc !important;
+}
+td.L {
+     border-left-color: black !important;
+     border-left-width: 2px !important;
+}
+th.L {
+     border-left-color: black !important;
+     border-left-width: 2px !important;
+}
+#infos_legales {
+    font-size: 12px;
+    font-style: italic;
+    text-align: justify;
+}
+.aujourdhui{background-color: #fcf3a4 !important;}
+/*
+.matin {background: linear-gradient(to bottom right, transparent 50%, white 51%);}
+.apres_midi {background: linear-gradient(to bottom right, white 50%, transparent 51%);}
+*/
+.demande{background-color: #efd6b8 !important;}
+.valide{background-color: #44c466 !important;}
+.saisi{background-color: #377bef !important;}
+.refuse{background-color: #c43e0d !important;}
+.abandonne{background-color: #c8b3e0 !important;}
+
+.absence_injustifiee{background-color: #825f47 !important;}
+.conges{background-color: #47a9ff !important;}
+.rtt{background-color: #ff91de !important;}
+.maladie{background-color: #7df28f !important;}
+.sans_solde{background-color: #a50101 !important;}
+.conge_parental{background-color: #87dbca !important;}
+.conge_maternite{background-color: #b62fef !important;}
+.conge_paternite{background-color: #088719 !important;}
+.recuperation{background-color: #ff8a38 !important;}
+.formation{background-color: #37507a !important;}
+.conge_exceptionnel{background-color: #7c3844 !important;}
+.travail_a_distance{background-color: #f77b7b !important;}
+.ferie{background-color: #70625e !important;}
+
+#loaderImg                 { display: none; z-index: 10; background: #fff ; text-align: center ; height: 100% ; width: 100% ; position: absolute ; top: 0 ; opacity: 0.8 ; }
+#loaderImg img             { margin-top: 15% ; }

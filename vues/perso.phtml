@@ -1,0 +1,252 @@
+    <div class="row">
+      <div id="content" class="col-lg-12">
+
+<!-- LES ABSENCES DE MON/MES EQUIPE --> 
+        <div class="box">
+          <div class="box-header" data-original-title>
+            <h2><i class="fa fa-users"></i><span class="break"></span>Etat des absences dans mon &eacute;quipe</h2>
+            <div class="actions pull-right">
+              <a href="" class="div_perso_conges_open" >
+                <button type="button" class="btn btn-success"><i class="fa fa-plus"></i>&nbsp;Faire une demande d'absence</button>
+              </a>
+            </div>
+          </div>
+          <div class="box-content">
+            <!-- La légende -->
+            <table style="margin-bottom:20px !important"><tr><td class="demande" style="width:25px"></td><td>&nbsp;&nbsp;Demande pos&eacute;e</td><td style="width:5%"></td><td class="valide" style="width:25px"></td><td>&nbsp;&nbsp;Valid&eacute; par votre responsable</td><td style="width:5%"></td><td class="travail_a_distance" style="width:25px"></td><td>&nbsp;&nbsp;Travail &agrave; distance</td><td style="width:5%"></td></tr></table>
+
+            <!-- La navigation du calendrier -->
+            <table class="calendrier">
+              <thead><tr>
+                <th style="width:42.5%; text-align:right;"><a class="prev" href="<?php echo $_SERVER['PHP_SELF'] ?>?page=perso&month=<?php echo date('m', strtotime('-1 month', strtotime($year.'-'.$month.'-01'))) ?>&year=<?php echo date('Y', strtotime('-1 month', strtotime($year.'-'.$month.'-01'))) ?>"><<</a></th>
+                <th style="width:15%; text-align:center;"><span class="title"><?php echo Calendrier::$month['fr'][$month] .' '. $year ?></span></th>
+                <th style="width:42.5%; text-align:left;"><a class="next" href="<?php echo $_SERVER['PHP_SELF'] ?>?page=perso&month=<?php echo date('m', strtotime('+1 month', strtotime($year.'-'.$month.'-01'))) ?>&year=<?php echo date('Y', strtotime('+1 month', strtotime($year.'-'.$month.'-01'))) ?>">>></a></th>
+              </tr></thead>
+            </table>
+
+
+
+
+
+            <!-- Les absences de chaque employe de l'equipe -->
+<?php
+// premiere boucle sur toutes les equipes de l'employe
+foreach($employes_service_absences as $equipe => $employes_absences)
+{
+    ?>
+
+            <table class="table table-striped table-bordered bootstrap-datatable datatable table-hover">
+              <caption><span class="label label-primary" >Equipe <?php echo $equipe;?></span></caption>
+              <thead>
+                <tr>
+                  <th style="width:15%"></th>
+    <?php
+    for( $j=1; $j<=$days_in_month; $j++ )
+    {
+        $type_jour = date('N',strtotime($year.'-'.$month.'-'.$j));
+        $jour_class = '';
+        if (in_array(strtotime($year.'-'.$month.'-'.$j), Openpap_Absence::getHolidays($year)))
+        //if (Calendrier::joursFeries(strtotime($year.'-'.$month.'-'.$j)))
+            $jour_class = 'ferie';
+        if (strtotime($year.'-'.$month.'-'.$j) == strtotime(date('Y-m-d')))
+            $jour_class = 'aujourdhui';
+        ?>
+                  <th class="<?php echo Calendrier::$weekdayXShort['fr'][$type_jour] ;?> <?php echo $jour_class ;?>" style="text-align:center;"><?php echo Calendrier::$weekdayXShort['fr'][$type_jour] ; ?> </th>
+        <?php
+    }
+    ?>
+
+                </tr>
+              </thead>
+              <tbody>
+
+    <?php
+    // deuxieme boucle sur les employe de chaque equipe
+    foreach ($employes_absences as $employe_absences)
+    {
+        ?>
+                <tr style="<?php echo ($employe_absences['id'] == $employes_id) ? 'font-weight: bold ; color: #030' : '' ?>"> 
+                  <td><strong><?php echo $employe_absences['nom'] .' '. $employe_absences['prenom'];?></strong></td>
+        <?php
+        for($j = 1 ; $j <= $days_in_month ; $j++)
+        {
+            $type_jour = date('N', strtotime($year .'-'. $month .'-'. $j));
+
+            // Sur ce calendrier on presente les absences de l'equipe sans indiquer le motif (sauf dans le cas de travail a distance). On indique seulement si l'absence est posée ou validée
+            $couleurs_journee = array('matin' => 'transparent', 'apres_midi' => 'transparent') ;
+
+            if(array_key_exists(date('Y-m-d', strtotime($year.'-'.$month.'-'.$j)), $employe_absences['absences']))
+            {
+                foreach($employe_absences['absences'][date('Y-m-d', strtotime($year.'-'.$month.'-'.$j))] as $demi_journee => $absences_jour)
+                {
+                    foreach ($absences_jour as $type => $absences_etat)
+                    {
+                        foreach ($absences_etat as $absence_etat)
+                        {
+                            if($type == 'travail_a_distance')
+                                $type = 'travail_a_distance' ;
+                            else
+                                $type =  $absence_etat['etat'] == 'saisi' ? 'valide' : $absence_etat['etat'] ;
+                            $couleurs_journee[$demi_journee] = $colors[$type] ;
+                        }
+                    }
+                }
+
+            }
+
+            // On rejoute une couleur pour les jours feries et le jour en cours (si jour ferié on n'indique pas la couleur de l'absence)
+            $jour_class = '' ;
+            if (in_array(strtotime($year.'-'.$month.'-'.$j), Openpap_Absence::getHolidays($year)))
+            //if (Calendrier::joursFeries(strtotime($year.'-'.$month.'-'.$j)))
+            {
+                $jour_class = 'ferie' ;
+                $couleurs_journee = array('matin' => 'transparent', 'apres_midi' => 'transparent') ;
+            }
+            if (strtotime($year.'-'.$month.'-'.$j) == strtotime(date('Y-m-d')))
+                $jour_class = 'aujourdhui';
+            ?>
+                  <td class="<?php echo $jour_class ;?> <?php echo Calendrier::$weekdayXShort['fr'][$type_jour] ; ?>" style="text-align:center; background: linear-gradient(to bottom right, <?php echo $couleurs_journee['matin'] ;?> 50%, <?php echo $couleurs_journee['apres_midi'] ;?> 51%); "><?php echo $j ;?></td>
+            <?php
+        }
+        ?>
+                </tr>
+        <?php
+    }
+    ?> 
+              </tbody>
+            </table>
+
+    <?php
+}
+?>
+
+          </div>
+        </div>
+      </div>
+
+<!-- FIN LES ABSENCES DE MON/MES EQUIPE --> 
+
+
+<!-- LE RECAP DE MES ABSENCES EN TABLEAU --> 
+
+
+      <div id="content" class="col-lg-9">
+        <div class="box">
+          <div class="box-header" data-original-title>
+            <h2><i class="fa fa-users"></i><span class="break"></span>R&eacute;capitulatif de mes absences</h2>
+          </div>
+
+          <div class="box-content">
+            <table style="margin-bottom:20px !important"><tr><td class="demande" style="width:25px"></td><td>&nbsp;&nbsp;Demande pos&eacute;e</td><td style="width:5%"></td><td class="valide" style="width:25px"></td><td>&nbsp;&nbsp;Valid&eacute;e</td><td style="width:5%"><td class="refuse" style="width:25px"></td><td>&nbsp;&nbsp;Refus&eacute;e</td><td style="width:5%"><td class="abandonne" style="width:25px"></td><td>&nbsp;&nbsp;Abandonn&eacute;e</td><td style="width:5%"></td><td class="saisi" style="width:25px"></td><td>&nbsp;&nbsp;Int&eacute;gr&eacute;e au module de paie</td></tr></table>
+            <table class="table table-striped table-bordered bootstrap-datatable datatable table-hover">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Type d'absence</th>
+                  <th>D&eacute;part</th>
+                  <th>Retour</th>
+                  <th>Nombre de jours</th>
+                  <th>Nombre de samedis</th>
+                  <th>Trait&eacute; par</th>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+<?php
+foreach($mes_absences as $mon_absence)
+{
+    ?>
+                <tr> 
+                  <td class="<?php echo $mon_absence['etat']; ?>" style="width:25px"></td>
+                  <td <?php echo $mon_absence['type'] == 'absence_injustifiee' && $mon_absence['etat'] == 'valide' ? "style='color:#f94848; font-weight: bold;'" : "" ?>><?php echo $_absences[$mon_absence['type']]; ?> <?php echo $mon_absence['type'] == 'conge_exceptionnel' ? ' ('. $mon_absence['commentaire'] .')': '' ; ?></td>
+                  <td><?php echo  date("d-m-Y \(G\h\)", strtotime($mon_absence['date_debut'])) ;?></td>
+                  <td><?php echo  date("d-m-Y \(G\h\)", strtotime($mon_absence['date_fin'])) ;?></td>
+                  <td><?php echo  in_array($mon_absence['type'], array('conges','rtt')) ? $mon_absence['nombre_jours'] : '-'; ?></td>
+                  <td><?php echo  $mon_absence['type'] == 'conges' ? $mon_absence['nombre_samedi'] : '-'; ?></td>
+                  <td><?php echo $mon_absence['valide_par_prenom'] .' '. $mon_absence['valide_par_nom'];?></td>
+                  <td>
+    <?php
+    if($mon_absence['etat'] != 'saisi' && $mon_absence['type'] != 'absence_injustifiee' && $mon_absence['type'] != 'maladie')
+    {
+        ?>
+                    <a href="" class="modif_conges_open" id="modif_conges_open<?php echo $mon_absence['id'] ; ?>" data-absenceid="<?php echo $mon_absence['id'] ?>"><i class="fa fa-edit"></i></a>
+        <?php
+    }
+    ?>
+                  </td>
+                  <td>
+    <?php
+    if($mon_absence['etat'] != 'saisi' && $mon_absence['type'] != 'absence_injustifiee' && $mon_absence['type'] != 'maladie')
+    {
+        ?>
+                    <?php include(dirname(__FILE__).'/../vues/perso_suppression_conges.box.phtml') ; ?><a href="" class="suppr_conges_open" id="suppr_conges_open<?php echo $mon_absence['id'] ; ?>" data-congesid="<?php echo $mon_absence['id'] ?>"><i class="fa fa-times red"></i></a>
+        <?php
+    }
+    ?>
+                  </td>
+                </tr>
+    <?php
+}
+?> 
+              </tbody>
+            </table>
+
+          </div>
+        </div>
+      </div>
+
+<!-- FIN LE RECAP DE MES ABSENCES EN TABLEAU --> 
+
+<!-- MON COMPTEUR --> 
+
+      <div id="content" class="col-lg-3">
+        <div class="box info-box">
+          <div class="backgroundColor blue">
+            <div class="clearfix">
+              <span class="title">MON COMPTEUR <?php echo date('Y',strtotime($min_date_compteur)) .'-'. date('Y',strtotime($max_date_compteur)) ?></br> (Th&eacute;orique - Changement si absences)</span>
+              <span class="value"><?php echo $mes_absences_formatees['compteur']['conges'] ;  ?> CP (<?php echo $mes_absences_formatees['compteur']['samedis'] ?> samedis pris)</br><?php echo $mes_absences_formatees['compteur']['rtt'] ;  ?> RTT</span></br>
+            </div>
+          </div>
+
+          <div class="quarters">
+            <div class="quarter q1">
+              En attente de validation :
+            </div>
+            <div class="quarter q2">
+              <div><?php echo $mes_absences_formatees['compteur']['conges_demande']  ?> CP (dont <?php echo $mes_absences_formatees['compteur']['samedis_demande'] ?> samedis)</br><?php echo $mes_absences_formatees['compteur']['rtt_demande']  ?> RTT</div>
+            </div>
+            <div class="quarter q3">
+              Absences valid&eacute;es pass&eacute;es 
+              <span><?php echo $mes_absences_formatees['compteur']['conges_passes']  ?> CP</br><?php echo $mes_absences_formatees['compteur']['rtt_passes']  ?> RTT</span>
+            </div>
+            <div class="quarter q4">
+              Absences valid&eacute;es &agrave; venir
+              <span><?php echo $mes_absences_formatees['compteur']['conges_avenir']  ?> CP</br><?php echo $mes_absences_formatees['compteur']['rtt_avenir']  ?> RTT</span>
+            </div>
+<?php
+if( $mes_absences_formatees['compteur']['rtt'] > 0)
+{
+    if($month % 2 == 0 && $month != 12)
+        $display_info = $mes_absences_formatees['rtt_poses_mois'][$month] .' RTT pouvant &ecirc;tre pris en '. Calendrier::$month['fr'][$month].  ' - '. Calendrier::$month['fr'][sprintf('%02d', $month + 1)] ;
+    elseif($month % 2 != 0 && $month != 1)
+        $display_info = $mes_absences_formatees['rtt_poses_mois'][sprintf('%02d', $month - 1)] .' RTT pouvant &ecirc;tre pris en '. Calendrier::$month['fr'][sprintf('%02d', $month - 1)] . ' - '. Calendrier::$month['fr'][$month] ;
+    elseif($month == 1 || $month == 12)
+        $display_info = $mes_absences_formatees['rtt_poses_mois'][$month] .' RTT pouvant &ecirc;tre pris en '. Calendrier::$month['fr']['12'] . ' - '. Calendrier::$month['fr']['01'] ;
+    ?>  
+            <div class="quarter">
+              <?php echo $display_info ; ?> (sous r&eacute;serve de les avoir acquis)
+            </div>
+    <?php
+}
+?>
+          </div>
+        </div>
+<!-- FIN MON COMPTEUR --> 
+
+      </div>
+    </div>
+
+
+
+

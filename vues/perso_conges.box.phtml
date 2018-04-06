@@ -1,0 +1,66 @@
+<div id="div_perso_conges" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title"><b></b></h4>
+      </div>
+      <form id="perso_conges" method="GET">
+        <div class="modal-body">
+          <table width="100%">
+            <tr>
+              <td width="30%"><strong>Départ :</strong></td><td><input type="text" size="12%" placeholder="date" name="date_depart"  id="datepicker_depart" required></td><td><input type="radio" name="heure_depart" value="matin" checked='checked'>&nbsp;Matin</input>&nbsp;&nbsp;<input type="radio" name="heure_depart" value="apres_midi">&nbsp;Apr&egrave;s-Midi</input></td>
+            </tr>
+            <tr>
+              <td width="30%"><strong>Retour :</strong></td><td><input type="text" size="12%" placeholder="date" name="date_retour"  id="datepicker_retour"  required></td><td><input type="radio" name="heure_retour" value="matin" checked='checked'>&nbsp;Matin</input>&nbsp;&nbsp;<input type="radio" name="heure_retour" value="apres_midi">&nbsp;Apr&egrave;s-Midi</input></td>
+            </tr>
+            <tr>
+              <td width="30%">
+                <strong>Type d'absence :</strong></td><td>
+                <select class="form-control" name="type" id="type_add">
+<?php
+foreach($type_absences_perso as $k => $type_absence)
+{
+    ?>
+                  <option value="<?php echo $type_absence ; ?>"><?php echo $_absences[$type_absence]; ?></option>
+    <?php
+}
+?>
+                </select>
+              </td>
+            </tr>
+            <tr id="nb_jours_add">
+              <td width="30%"><strong>Nombre de jours :</strong></td><td><input type="number" step="0.5" min="0" name="nombre_jours" value=""  /></td>
+            </tr>
+            <tr id="nb_samedis_add">
+              <td width="30%"><strong>Dont samedis :</strong></td><td><input type="number" name="nombre_samedi" min="0" value=""  /></td>
+            </tr>
+
+            <tr id="commentaire_conge_exceptionnel_add">
+              <td width="20%"><strong>Détail : </strong></td><td><input type="text" name="commentaire" id="" value=""  /></td>
+            </tr>
+          </table>
+          </br>
+          <p id="infos_legales">
+            Nb: Au cas où je sollicite un fractionnement de mes congés d'été pour en prendre une partie hors période (soit du 31 octobre au 1er mai), je renonce expressément au bénéfice des jours supplémentaires prévus au 3ème alinéa de l'article L 223.8 (renuméroté L3141-19) du Code du Travail
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+          <input type="hidden" name="employes_id" value="<?php echo $employe['id'] ; ?>">
+          <input type="hidden" name="etat" value="<?php echo $droits_auto_validation ? 'valide' : 'demande' ; ?>">
+          <input type="hidden" name="valide_par" value="<?php echo $droits_auto_validation ? $employe['id'] : null ; ?>">
+<!-- Les inputs suivants sont remplis en js en fonction du bouton sur lequel on clique -->
+          <input type="hidden" name="type_demande" id="type_demande" value="">
+          <input type="hidden" name="absence_id" id="absence_id" value="">
+          <input type="hidden" name="objet"      value="absences_perso">
+          <input type="hidden" name="action"     value="demande">
+          <input type="submit" name="demande_conges" class="btn btn-primary" value="Valider">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+

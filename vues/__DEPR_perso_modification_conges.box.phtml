@@ -1,0 +1,54 @@
+<div id="modif_conges<?php echo $mon_absence['id']; ?>" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title"><b>MODIFIER MA DEMANDE D'ABSENCE</b></h4>
+      </div>
+      <form method="post" action="<?=$_SERVER['REQUEST_URI']?>">
+        <div class="modal-body">
+          <table width="100%">
+            <tr>
+              <td><strong>Départ :</strong></td><td><input type="text" size="12%" placeholder="date" name="date_depart" class="datepicker"    value="<?php echo date('Y-m-d', strtotime($mon_absence['date_debut'])) ; ?>" ></td><td><input type="radio" name="heure_depart" value="matin" <?php echo date('H', strtotime($mon_absence['date_debut'])) == "09" ? "checked='checked'" : ""; ?>>&nbsp;Matin</input>&nbsp;&nbsp;<input type="radio" name="heure_depart" value="apres_midi"  <?php echo date('H',strtotime($mon_absence['date_debut'])) == "13" ? "checked='checked'" : ""; ?>>&nbsp;Apr&egrave;s-Midi</input></td>
+            </tr>
+            <tr>
+              <td><strong>Retour :</strong></td><td><input type="text" size="12%" placeholder="date" name="date_retour" class="datepicker"  value="<?php echo date('Y-m-d', strtotime($mon_absence['date_fin'])); ?>" ></td><td><input type="radio" name="heure_retour" value="matin"  <?php echo date('H', strtotime($mon_absence['date_fin'])) == "09" ? "checked='checked'" : ""; ?>>&nbsp;Matin</input>&nbsp;&nbsp;<input type="radio" name="heure_retour" value="apres_midi" <?php echo date('H', strtotime($mon_absence['date_fin'])) == "13" ? "checked='checked'" : ""; ?>>&nbsp;Apr&egrave;s-Midi</input></td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Type d'absence :</strong></td><td>
+                <select class="form-control" name="type" id="type_modif<?php echo $mon_absence['id']; ?>">
+<?php
+foreach($type_absences_perso as $k => $type_absence)
+{
+    ?>
+                  <option value="<?php echo $type_absence ; ?>" <?php echo $type_absence == $mon_absence['type'] ? 'selected' : ''; ?>><?php echo $_absences[$type_absence]; ?></option>
+    <?php
+}
+?>
+                </select>
+              </td>
+            </tr>
+            <tr id="nb_jours_modif<?php echo $mon_absence['id']; ?>">
+              <td><strong>Nombre de jours :</strong></td><td><input type="number" step="0.5" name="nombre_jours" min="0" value="<?php echo $mon_absence['nombre_jours']; ?>"  /></td>
+            </tr>
+            <tr id="nb_samedis_modif<?php echo $mon_absence['id']; ?>">
+              <td><strong>Nombre de samedis :</strong></td><td><input type="number" name="nombre_samedi" min="0" value="<?php echo $mon_absence['nombre_samedi']; ?>"  /></td>
+            </tr>
+
+            <tr id="commentaire_conge_exceptionnel_modif<?php echo $mon_absence['id']; ?>">
+              <td><strong>Détail : </strong></td><td><input type="text" name="commentaire" id="" value="<?php echo $mon_absence['commentaire']; ?>"  /></td>
+            </tr>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+          <input type="hidden" name="employes_id" value="<?php echo $mon_absence['employes_id'] ; ?>">
+          <input type="hidden" name="id" value="<?php echo $mon_absence['id'] ; ?>">
+          <input type="submit" name="modif_conges" class="btn btn-primary" value="Valider">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
